@@ -197,7 +197,7 @@ class FirstTaskActivity : AppCompatActivity(), VolleyListener {
             }
         }
         delete.setOnClickListener {
-            deleteFileTwo()
+            deleteFiles()
         }
 
         move.setOnClickListener {
@@ -275,12 +275,6 @@ class FirstTaskActivity : AppCompatActivity(), VolleyListener {
         } catch (e: Exception) {
             e.printStackTrace()
             true
-        }
-        if (status) {
-            ToastUtil.errorToast(applicationContext, "Error deleting files")
-        } else {
-            App.db!!.taskOneDAO().delete(Integer.parseInt(number.text.toString()))
-            ToastUtil.toast(applicationContext, "File successfully deleted...")
         }
     }
 
