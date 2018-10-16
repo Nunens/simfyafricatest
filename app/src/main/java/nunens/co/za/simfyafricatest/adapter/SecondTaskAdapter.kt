@@ -11,10 +11,12 @@ import android.widget.TextView
 import com.amulyakhare.textdrawable.TextDrawable
 import com.amulyakhare.textdrawable.util.ColorGenerator
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import menolla.co.za.itsi_test.utils.ToastUtil
 import nunens.co.za.simfyafricatest.R
 import nunens.co.za.simfyafricatest.database.model.SecondTaskListModel
 import nunens.co.za.simfyafricatest.listener.AdapterClickListener
+
 
 class SecondTaskAdapter(var itemList: ArrayList<SecondTaskListModel>) : RecyclerView.Adapter<SecondTaskAdapter.ViewHolder>() {
     companion object {
@@ -75,6 +77,11 @@ class SecondTaskAdapter(var itemList: ArrayList<SecondTaskListModel>) : Recycler
                 Glide.with(ctx)
                         .load(g.image)
                         .into(image)
+                        .apply {
+                            RequestOptions()
+                                    .error(R.drawable.placeholder)
+                                    .centerCrop()
+                        }
             } catch (e: Exception) {
                 ToastUtil.errorToast(ctx!!, "Unable to load image")
             }

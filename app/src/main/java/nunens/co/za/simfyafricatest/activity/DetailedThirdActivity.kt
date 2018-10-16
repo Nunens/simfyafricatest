@@ -4,6 +4,7 @@ import android.media.MediaPlayer
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.activity_detailed_third.*
 import menolla.co.za.itsi_test.adapter.SecondTaskAdapter
 import menolla.co.za.itsi_test.utils.ToastUtil
@@ -24,6 +25,11 @@ class DetailedThirdActivity : AppCompatActivity() {
         t_description.text = myDescription
         try {
             Glide.with(SecondTaskAdapter.ctx)
+                    .apply {
+                        RequestOptions()
+                                .error(R.drawable.placeholder)
+                                .centerCrop()
+                    }
                     .load(myImage)
                     .into(t_image)
         } catch (e: Exception) {
