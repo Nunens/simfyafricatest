@@ -197,24 +197,7 @@ class FirstTaskActivity : AppCompatActivity(), VolleyListener {
             }
         }
         delete.setOnClickListener {
-            var status = false
-            try {
-                FileUtils.deleteDirectory(File(externalFilePath))
-            } catch (e: Exception) {
-                status = true
-            }
-            status = try {
-                FileUtils.deleteDirectory(File(internalFilePath))
-                false
-            } catch (e: Exception) {
-                true
-            }
-            if (status) {
-                ToastUtil.errorToast(applicationContext, "Error deleting files")
-            } else {
-                App.db!!.taskOneDAO().delete(Integer.parseInt(number.text.toString()))
-                ToastUtil.toast(applicationContext, "File successfully deleted...")
-            }
+            deleteFileTwo()
         }
 
         move.setOnClickListener {
@@ -236,6 +219,68 @@ class FirstTaskActivity : AppCompatActivity(), VolleyListener {
                 getDeviceEncryptionStatus(internalFile)
             }
 
+        }
+        reset.setOnClickListener {
+            deleteFiles()
+
+            synchronized(this) {
+                val list = App!!.db!!.taskOneDAO().getAll()
+                for (i in 0 until list.size) {
+                    val model: TaskOneModel = list[i]
+                    val internal = applicationContext.filesDir.toString() + "/" + model.id + ".txt"
+                    val external = Environment.getExternalStorageDirectory().toString() + "/" + model.id + ".txt"
+                    deleteFiles(internal, external)
+                }
+            }
+            App!!.db!!.clearAllTables()
+            number.setText("")
+            ToastUtil.toast(applicationContext, "App successfully reset...")
+        }
+    }
+
+    private fun deleteFiles() {
+        var status = false
+        try {
+            FileUtils.deleteDirectory(File(externalFilePath))
+        } catch (e: Exception) {
+            e.printStackTrace()
+            status = true
+        }
+        status = try {
+            FileUtils.deleteDirectory(File(internalFilePath))
+            false
+        } catch (e: Exception) {
+            e.printStackTrace()
+            true
+        }
+        if (status) {
+            ToastUtil.errorToast(applicationContext, "Error deleting files")
+        } else {
+            App.db!!.taskOneDAO().delete(Integer.parseInt(number.text.toString()))
+            ToastUtil.toast(applicationContext, "File successfully deleted...")
+        }
+    }
+
+    private fun deleteFiles(internal: String, external: String) {
+        var status = false
+        try {
+            FileUtils.deleteDirectory(File(external))
+        } catch (e: Exception) {
+            e.printStackTrace()
+            status = true
+        }
+        status = try {
+            FileUtils.deleteDirectory(File(internal))
+            false
+        } catch (e: Exception) {
+            e.printStackTrace()
+            true
+        }
+        if (status) {
+            ToastUtil.errorToast(applicationContext, "Error deleting files")
+        } else {
+            App.db!!.taskOneDAO().delete(Integer.parseInt(number.text.toString()))
+            ToastUtil.toast(applicationContext, "File successfully deleted...")
         }
     }
 

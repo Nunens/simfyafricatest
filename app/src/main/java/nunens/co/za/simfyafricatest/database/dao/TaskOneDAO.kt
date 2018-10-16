@@ -12,6 +12,9 @@ interface TaskOneDAO {
     @Query("Delete FROM TaskOneModel")
     fun deleteAll()
 
+    @Query("select * FROM TaskOneModel")
+    fun getAll(): List<TaskOneModel>
+
     @Query("Delete FROM TaskOneModel where id = :id")
     fun delete(id: Int)
 
