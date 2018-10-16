@@ -239,12 +239,12 @@ class FirstTaskActivity : AppCompatActivity(), VolleyListener {
     private fun deleteFiles() {
         var status = false
         try {
-            deleteFile(externalFilePath)
+            deleteFile(File(externalFilePath).absolutePath)
         } catch (e: Exception) {
             e.printStackTrace()
         }
         status = try {
-            deleteFile(internalFilePath)
+            deleteFile(File(internalFilePath).absolutePath)
             false
         } catch (e: Exception) {
             e.printStackTrace()
@@ -261,13 +261,13 @@ class FirstTaskActivity : AppCompatActivity(), VolleyListener {
     private fun deleteFiles(internal: String, external: String) {
         var status = false
         try {
-            deleteFile(external)
+            deleteFile(File(external).absolutePath)
         } catch (e: Exception) {
             e.printStackTrace()
             status = true
         }
         status = try {
-            deleteFile(internal)
+            deleteFile(File(internal).absolutePath)
             false
         } catch (e: Exception) {
             e.printStackTrace()
