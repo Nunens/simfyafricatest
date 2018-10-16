@@ -221,8 +221,6 @@ class FirstTaskActivity : AppCompatActivity(), VolleyListener {
 
         }
         reset.setOnClickListener {
-            deleteFiles()
-
             synchronized(this) {
                 val list = App!!.db!!.taskOneDAO().getAll()
                 for (i in 0 until list.size) {
