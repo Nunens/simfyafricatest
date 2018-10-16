@@ -239,12 +239,18 @@ class FirstTaskActivity : AppCompatActivity(), VolleyListener {
     private fun deleteFiles() {
         var status = false
         try {
-            deleteFile(File(externalFilePath).absolutePath)
+            val file = File(externalFilePath)
+            if (file.exists()) {
+                file.delete()
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
         status = try {
-            deleteFile(File(internalFilePath).absolutePath)
+            val file = File(internalFilePath)
+            if (file.exists()) {
+                file.delete()
+            }
             false
         } catch (e: Exception) {
             e.printStackTrace()
@@ -261,13 +267,19 @@ class FirstTaskActivity : AppCompatActivity(), VolleyListener {
     private fun deleteFiles(internal: String, external: String) {
         var status = false
         try {
-            deleteFile(File(external).absolutePath)
+            val file = File(external)
+            if (file.exists()) {
+                file.delete()
+            }
         } catch (e: Exception) {
             e.printStackTrace()
             status = true
         }
         status = try {
-            deleteFile(File(internal).absolutePath)
+            val file = File(internal)
+            if (file.exists()) {
+                file.delete()
+            }
             false
         } catch (e: Exception) {
             e.printStackTrace()
