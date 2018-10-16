@@ -338,11 +338,21 @@ class FirstTaskActivity : AppCompatActivity(), VolleyListener {
         }
         Log.e(TAG, "Encryption status $status")
         if (status == 3 || status == 4) {
-            //decryptFile(generateKey("simfyAfrica"), file.readBytes())
-            decrypt(file.readBytes())
+            try {
+                decrypt(file.readBytes())
+            } catch (i: IllegalArgumentException) {
+                ToastUtil.errorToast(applicationContext, "Error decrypting file")
+            } catch (e: Exception) {
+                ToastUtil.errorToast(applicationContext, "Error decrypting file")
+            }
         } else {
-            //encryptFile(generateKey("simfyAfrica"), file.readBytes())
-            encrypt(file.readBytes())
+            try {
+                encrypt(file.readBytes())
+            } catch (i: IllegalArgumentException) {
+                ToastUtil.errorToast(applicationContext, "Error decrypting file")
+            } catch (e: Exception) {
+                ToastUtil.errorToast(applicationContext, "Error decrypting file")
+            }
         }
     }
 
