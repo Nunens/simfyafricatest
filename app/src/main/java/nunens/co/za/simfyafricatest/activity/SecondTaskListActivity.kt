@@ -12,8 +12,13 @@ import menolla.co.za.itsi_test.adapter.SecondTaskAdapter
 import nunens.co.za.simfyafricatest.App.Companion.context
 import nunens.co.za.simfyafricatest.R
 import nunens.co.za.simfyafricatest.database.model.SecondTaskListModel
+import nunens.co.za.simfyafricatest.listener.AdapterClickListener
 
-class SecondTaskListActivity : AppCompatActivity() {
+class SecondTaskListActivity : AppCompatActivity(), AdapterClickListener {
+    override fun onClick(model: SecondTaskListModel) {
+
+    }
+
     var arrayList: ArrayList<SecondTaskListModel> = ArrayList()
     var url = "http://placehold.it/2048&text=Item "
     var model: SecondTaskListModel? = null
@@ -39,7 +44,7 @@ class SecondTaskListActivity : AppCompatActivity() {
         Log.e("Full List", "I = ${Gson().toJson(arrayList)}")
         val adapter = SecondTaskAdapter(arrayList)
         secont_task_list.adapter = adapter
-        adapter.setItems(applicationContext, arrayList)
+        adapter.setItems(applicationContext, arrayList, this)
     }
     override fun onBackPressed() {
         finish()
