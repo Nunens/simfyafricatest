@@ -92,6 +92,7 @@ class FirstTaskActivity : AppCompatActivity(), VolleyListener {
                     dialog.show()
                     VolleyUtil.firstRequest(applicationContext, number.text.toString() + "/", this)
                 } else {
+                    dialog.dismiss()
                     ToastUtil.noNetworkToast(applicationContext)
                 }
             }

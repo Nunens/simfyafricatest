@@ -70,6 +70,7 @@ class ThirdTaskActivity : AppCompatActivity(), VolleyListener, AdapterClickListe
             dialog.show()
             VolleyUtil.thirdRequest(applicationContext, this)
         } else {
+            dialog.dismiss()
             ToastUtil.noNetworkToast(applicationContext)
         }
     }
