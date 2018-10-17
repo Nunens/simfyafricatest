@@ -1,9 +1,7 @@
 package nunens.co.za.simfyafricatest.activity
 
 import android.app.ProgressDialog
-import android.app.admin.DevicePolicyManager
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.support.design.widget.AppBarLayout
@@ -23,7 +21,9 @@ import nunens.co.za.simfyafricatest.R
 import nunens.co.za.simfyafricatest.database.model.*
 import nunens.co.za.simfyafricatest.listener.VolleyListener
 import nunens.co.za.simfyafricatest.network.VolleyUtil
+import nunens.co.za.simfyafricatest.utils.Encryption
 import nunens.co.za.simfyafricatest.utils.Util
+import org.apache.commons.io.FileUtils
 import org.jetbrains.anko.progressDialog
 import org.json.JSONObject
 import java.io.File
@@ -36,6 +36,7 @@ class FirstTaskActivity : AppCompatActivity(), VolleyListener {
     var internalFilePath: String = ""
     var externalFilePath: String = ""
     lateinit var dialog: ProgressDialog
+    val string_encoding = "UTF-8"
 
     //everride method of successful response from volley
     override fun onResponse(resp: String?) {
@@ -52,12 +53,35 @@ class FirstTaskActivity : AppCompatActivity(), VolleyListener {
         ToastUtil.errorToast(applicationContext, "Unknown error occurred")
     }
 
+    private fun checkEncryptionStatus() {
+        encrypt.text = "Decrypt"
+        val arr = ByteArray(16)
+        var fileRead: String? = ""
+        val file = File(externalFilePath)
+        Log.e(TAG, "External File path: ${file.absoluteFile}")
+        val internalFile = File(internalFilePath)
+        Log.e(TAG, "Internal File path: ${internalFile.absoluteFile}")
+        val encryption = Encryption!!.getDefault("Key", "Salt", arr)
+        if (file.exists()) {
+            fileRead = FileUtils.readFileToString(file, string_encoding)
+            val decryptedFile = encryption!!.decryptOrNull(fileRead!!)
+            if (decryptedFile == null)
+                encrypt.text = "Encrypt"
+            Log.e(TAG, "Decrypted 1: $decryptedFile")
+        } else {
+            fileRead = FileUtils.readFileToString(internalFile, string_encoding)
+            val decryptedFile = encryption!!.decryptOrNull(fileRead!!)
+            if (decryptedFile == null)
+                encrypt.text = "Encrypt"
+            Log.e(TAG, "Decrypted 2: $decryptedFile")
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_first_tast)
 
         changeButtonsState(false)
-        getDeviceEncryptionStatus()
         dialog = progressDialog(message = "Please wait a bit…", title = "Fetching data")
         dialog.isIndeterminate = true
         dialog.setCancelable(false)
@@ -114,14 +138,44 @@ class FirstTaskActivity : AppCompatActivity(), VolleyListener {
             }
         }
         encrypt.setOnClickListener {
+            val arr = ByteArray(16)
+            var fileRead: String? = ""
             val file = File(externalFilePath)
             val internalFile = File(internalFilePath)
-            if (file.exists()) {
-                getDeviceEncryptionStatus(file)
+            val encryption = Encryption!!.getDefault("Key", "Salt", arr)
+            if (encrypt.text == "Encrypt") {
+                if (file.exists()) {
+                    fileRead = FileUtils.readFileToString(file, string_encoding)
+                    val encryptedFile = encryption!!.encryptOrNull(fileRead!!)
+                    Log.e(TAG, "Encrypted 1: $encryptedFile")
+                    FileUtils.writeStringToFile(file, encryptedFile, string_encoding)
+                    ToastUtil.toast(applicationContext, "File encrypted successfully")
+                    encrypt.text = "Decrypt"
+                } else {
+                    fileRead = FileUtils.readFileToString(internalFile, string_encoding)
+                    val encryptedFile = encryption!!.encryptOrNull(fileRead!!)
+                    Log.e(TAG, "Encrypted 2: $encryptedFile")
+                    FileUtils.writeStringToFile(internalFile, encryptedFile, string_encoding)
+                    ToastUtil.toast(applicationContext, "File encrypted successfully")
+                    encrypt.text = "Decrypt"
+                }
             } else {
-                getDeviceEncryptionStatus(internalFile)
+                if (file.exists()) {
+                    fileRead = FileUtils.readFileToString(file, string_encoding)
+                    val decryptedFile = encryption!!.decryptOrNull(fileRead!!)
+                    Log.e(TAG, "Decrypted 1: $decryptedFile")
+                    FileUtils.writeStringToFile(file, decryptedFile, string_encoding)
+                    ToastUtil.toast(applicationContext, "File decrypted successfully")
+                    encrypt.text = "Encrypt"
+                } else {
+                    fileRead = FileUtils.readFileToString(internalFile, string_encoding)
+                    val decryptedFile = encryption!!.decryptOrNull(fileRead!!)
+                    Log.e(TAG, "Decrypted 2: $decryptedFile")
+                    FileUtils.writeStringToFile(internalFile, decryptedFile, string_encoding)
+                    ToastUtil.toast(applicationContext, "File decrypted successfully")
+                    encrypt.text = "Encrypt"
+                }
             }
-
         }
         reset.setOnClickListener {
             synchronized(this) {
@@ -197,7 +251,7 @@ class FirstTaskActivity : AppCompatActivity(), VolleyListener {
     }
 
     //validate numbers
-    fun validateNumber(): Boolean {
+    private fun validateNumber(): Boolean {
         try {
             var value = Integer.parseInt(number.text.toString())
             if (value < 1 || value > 100) {
@@ -217,6 +271,8 @@ class FirstTaskActivity : AppCompatActivity(), VolleyListener {
         internalFilePath = applicationContext.filesDir.toString() + "/" + number.text.toString() + ".txt"
 
         externalFilePath = Environment.getExternalStorageDirectory().toString() + "/" + number.text.toString() + ".txt"
+
+        checkEncryptionStatus()
         return true
     }
 
@@ -248,59 +304,9 @@ class FirstTaskActivity : AppCompatActivity(), VolleyListener {
         })
     }
 
-    //check device encryption status
-    private fun getDeviceEncryptionStatus() {
-
-        var status = DevicePolicyManager.ENCRYPTION_STATUS_UNSUPPORTED
-
-        if (Build.VERSION.SDK_INT >= 11) {
-            val dpm = getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
-            if (dpm != null) {
-                status = dpm.storageEncryptionStatus
-            }
-        }
-        if (status == 3 || status == 4) {
-            encrypt.text = "Decrypt"
-        } else {
-            encrypt.text = "Encrypt"
-        }
-    }
-
-    //get device encryption status
-    private fun getDeviceEncryptionStatus(file: File) {
-
-        var status = DevicePolicyManager.ENCRYPTION_STATUS_UNSUPPORTED
-
-        if (Build.VERSION.SDK_INT >= 11) {
-            val dpm = getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
-            if (dpm != null) {
-                status = dpm.storageEncryptionStatus
-            }
-        }
-        Log.e(TAG, "Encryption status $status")
-        if (status == 3 || status == 4) {
-            try {
-                Util.decrypt(file.readBytes())
-                ToastUtil.toast(applicationContext, "File successfully decrypted...")
-            } catch (i: IllegalArgumentException) {
-                ToastUtil.errorToast(applicationContext, "Error decrypting file")
-            } catch (e: Exception) {
-                ToastUtil.errorToast(applicationContext, "Error decrypting file")
-            }
-        } else {
-            try {
-                Util.encrypt(file.readBytes())
-                ToastUtil.toast(applicationContext, "File successfully encrypted...")
-            } catch (i: IllegalArgumentException) {
-                ToastUtil.errorToast(applicationContext, "Error decrypting file")
-            } catch (e: Exception) {
-                ToastUtil.errorToast(applicationContext, "Error decrypting file")
-            }
-        }
-    }
 
     //creating a file
-    fun createFile(resp: JSONObject) {
+    private fun createFile(resp: JSONObject) {
         Log.e("FirstTaskActivity", resp.toString())
         var respObj: TaskOneModel? = TaskOneModel(Integer.parseInt(number.text.toString()))
         respObj!!.name = resp.getString("name")
