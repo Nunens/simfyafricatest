@@ -36,6 +36,10 @@
         <activity
             android:name=".activity.DetailedThirdActivity"
             android:screenOrientation="landscape" />
+
+        <service
+            android:name=".service.MusicService"
+            android:exported="false"></service>
     </application>
 
 </manifest>

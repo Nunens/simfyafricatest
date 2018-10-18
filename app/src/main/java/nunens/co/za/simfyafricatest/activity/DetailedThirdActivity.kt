@@ -1,6 +1,5 @@
 package nunens.co.za.simfyafricatest.activity
 
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.bumptech.glide.Glide
@@ -9,6 +8,7 @@ import kotlinx.android.synthetic.main.activity_detailed_third.*
 import menolla.co.za.itsi_test.adapter.SecondTaskAdapter
 import menolla.co.za.itsi_test.utils.ToastUtil
 import nunens.co.za.simfyafricatest.R
+import nunens.co.za.simfyafricatest.service.MusicService
 
 class DetailedThirdActivity : AppCompatActivity() {
     var myTitle: String = ""
@@ -38,8 +38,8 @@ class DetailedThirdActivity : AppCompatActivity() {
 
         play.setOnClickListener {
             try {
-                val mp = MediaPlayer.create(applicationContext, R.raw.meow)
-                mp.start()
+                //Start a music player service
+                MusicService.startActionPlay(applicationContext, R.raw.meow)
             } catch (e: Exception) {
                 ToastUtil.errorToast(applicationContext, "Error playing sound")
             }
