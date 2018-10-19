@@ -44,13 +44,6 @@ class SecondTaskAdapter(var itemList: ArrayList<SecondTaskListModel>) : Recycler
     }
 
     //used to initialize the group list and notify data set
-    fun setItems(context: Context, items: List<SecondTaskListModel>) {
-        ctx = context
-        itemList = items as ArrayList<SecondTaskListModel>
-        notifyDataSetChanged()
-    }
-
-    //used to initialize the group list and notify data set
     fun setItems(context: Context, items: List<SecondTaskListModel>, listener: AdapterClickListener) {
         adapterListener = listener
         ctx = context

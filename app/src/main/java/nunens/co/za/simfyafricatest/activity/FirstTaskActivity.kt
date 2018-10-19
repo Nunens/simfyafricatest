@@ -139,7 +139,7 @@ class FirstTaskActivity : AppCompatActivity(), VolleyListener {
         }
         encrypt.setOnClickListener {
             val arr = ByteArray(16)
-            var fileRead: String? = ""
+            var fileRead: String?
             val file = File(externalFilePath)
             val internalFile = File(internalFilePath)
             val encryption = Encryption!!.getDefault("Key", "Salt", arr)

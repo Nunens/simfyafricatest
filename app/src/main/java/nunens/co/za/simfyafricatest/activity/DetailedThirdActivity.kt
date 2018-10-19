@@ -7,6 +7,7 @@ import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.activity_detailed_third.*
 import menolla.co.za.itsi_test.adapter.SecondTaskAdapter
 import menolla.co.za.itsi_test.utils.ToastUtil
+import nunens.co.za.simfyafricatest.App
 import nunens.co.za.simfyafricatest.R
 import nunens.co.za.simfyafricatest.service.MusicService
 
@@ -40,6 +41,9 @@ class DetailedThirdActivity : AppCompatActivity() {
             try {
                 //Start a music player service
                 MusicService.startActionPlay(applicationContext, R.raw.meow)
+                
+                //injecting Vibrator services
+                App.vb!!.vibrate(20)
             } catch (e: Exception) {
                 ToastUtil.errorToast(applicationContext, "Error playing sound")
             }

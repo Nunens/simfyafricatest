@@ -1,10 +1,14 @@
 package menolla.co.za.itsi_test.network
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
+import android.os.Build
 import android.util.Log
+
+
 
 class NetworkCheck {
 
@@ -62,6 +66,41 @@ class NetworkCheck {
             }
             return wifiConnected
         }
+    }
+
+    //todo latest method to check if network is available or not
+    fun Context.isNetworkConnected(): Boolean {
+        val manager = getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val allNetworks = manager?.allNetworks?.let { it } ?: return false
+            allNetworks.forEach { network ->
+                val info = manager.getNetworkInfo(network)
+                if (info.state == NetworkInfo.State.CONNECTED) return true
+            }
+        } else {
+            val allNetworkInfo = manager?.allNetworkInfo?.let { it } ?: return false
+            allNetworkInfo.forEach { info ->
+                if (info.state == NetworkInfo.State.CONNECTED) return true
+            }
+        }
+        return false
+    }
+
+    fun isNetworkAvailable(activity: Activity): Boolean {
+        val connectivity = activity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (connectivity == null) {
+            return false
+        } else {
+            val info = connectivity.allNetworkInfo
+            if (info != null) {
+                for (i in info.indices) {
+                    if (info[i].state == NetworkInfo.State.CONNECTED) {
+                        return true
+                    }
+                }
+            }
+        }
+        return false
     }
 
 }

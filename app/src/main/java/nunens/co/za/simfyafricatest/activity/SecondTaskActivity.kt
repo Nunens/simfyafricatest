@@ -23,7 +23,7 @@ class SecondTaskActivity : AppCompatActivity() {
         finish()
     }
 
-    fun init() {
+    private fun init() {
         sharedPref = getSharedPreferences("SimfySession", Context.MODE_PRIVATE)
         editor = sharedPref!!.edit()
         if (sharedPref!!.getString("username", "") != "") {

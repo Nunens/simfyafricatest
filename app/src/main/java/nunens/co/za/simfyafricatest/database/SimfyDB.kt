@@ -1,6 +1,5 @@
 package nunens.co.za.simfyafricatest.database
 
-import android.arch.persistence.db.SupportSQLiteDatabase
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
@@ -38,9 +37,9 @@ abstract class SimfyDB : RoomDatabase() {
 
         private val sRoomDatabaseCallback = object : RoomDatabase.Callback() {
 
-            override fun onOpen(db: SupportSQLiteDatabase) {
+            /*override fun onOpen(db: SupportSQLiteDatabase) {
                 super.onOpen(db)
-            }
+            }*/
         }
     }
 }
